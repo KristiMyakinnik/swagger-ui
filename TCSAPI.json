@@ -1,0 +1,285 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.1.0",
+        "title": "Carrier Financial API",
+        "description": "Interface between Carrier Financial and TCS"
+    },
+    "schemes": [
+        "http"
+    ],
+    "host": "dev1web2012",
+    "basePath": "/TelarixApi/v1.0",
+    "paths": {
+        "/GetFileList": {
+            "get": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "description": "Get the array of information about backup files",
+                "operationId": "GetFileList",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "description": "The array of information about backup files",
+                            "items": {
+                                "properties": {
+                                    "Date": {
+                                        "type": "string",
+                                        "description": "Date of backup file's creation"
+                                    },
+                                    "Name": {
+                                        "type": "string",
+                                        "description": "Name of backup file"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Cannot get file list"
+                    }
+                }
+            }
+        },
+        "/GetFile/{filename}": {
+            "get": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "description": "Get binary data of certain backup transmission file",
+                "operationId": "GetFile",
+                "parameters": [
+                    {
+                        "name": "filename",
+                        "in": "path",
+                        "description": "The name of the file with transmission backup",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/BinaryData"
+                        }
+                    },
+                    "500": {
+                        "description": "File cannot be read"
+                    }
+                }
+            }
+        },
+        "/PostFinancialData/{filename}": {
+            "get": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "description": "Initiates the re-processing of the transmission",
+                "operationId": "PostFinancialData",
+                "parameters": [
+                    {
+                        "name": "filename",
+                        "in": "path",
+                        "description": "The name of the file with transmission backup",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/TransmissionResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "File was not found"
+                    }
+                }
+            }
+        },
+        "/PostData/{transmissionId}/{type}": {
+            "post": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "description": "Send and initiate the re-processing of changed entity",
+                "operationId": "PostData",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "transmissionId",
+                        "in": "path",
+                        "description": "Id of transmission",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "description": "The type of entity",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Changed entity information in Json format",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Wrong data was received"
+                    }
+                }
+            }
+        },
+        "/GetOrganizationsNoLockDayStates": {
+            "get": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "description": "Get list of locked organization's ids",
+                "operationId": "GetOrganizationsNoLockDayStates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "description": "The list of locked organization's ids",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to read organizations in enabled \"No Lock\" period"
+                    }
+                }
+            }
+        },
+        "/SetOrganizationNoLockDayState/{user_id}/{org_id}/{is_no_lock_period}": {
+            "get": {
+                "tags": [
+                    "Telarix Client Service API"
+                ],
+                "operationId": "SetOrganizationNoLockDayState",
+                "description": "Change organization lock state",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "The id of user who initiates changes",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "org_id",
+                        "in": "path",
+                        "description": "The id of organization to set lock state",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "is_no_lock_period",
+                        "in": "path",
+                        "description": "The value to set organization's lock state",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "500": {
+                        "description": "Failed to set organization \"No Lock\" period state"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "BinaryData": {
+            "type": "object",
+            "description": "Binary data of backup file"
+        },
+        "TransmissionResponse": {
+            "type": "object",
+            "description": "The response of certain transimission",
+            "properties": {
+                "ResponseDate": {
+                    "type": "string",
+                    "description": "Date and time of response to Telarix"
+                },
+                "ResponseStatus": {
+                    "type": "string",
+                    "description": "The status of transmission"
+                },
+                "Responses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Response"
+                    }
+                },
+                "TransmissionDate": {
+                    "type": "string",
+                    "description": "Date and time of transmission from Telarix"
+                },
+                "TransmissionID": {
+                    "type": "string",
+                    "description": "ID of transmission"
+                }
+            }
+        },
+        "Response": {
+            "type": "object",
+            "description": "Response of certain entity",
+            "properties": {
+                "Entity": {
+                    "type": "string",
+                    "description": "Type of entity (Invoice, Nort, Dispute, Document)"
+                },
+                "ErrorCodes": {
+                    "type": "string",
+                    "description": "Code of error"
+                },
+                "ErrorDescription": {
+                    "type": "string",
+                    "description": "Description of error"
+                },
+                "Status": {
+                    "type": "string",
+                    "description": "Status of certain entity"
+                },
+                "TelarixInvoiceID": {
+                    "type": "string",
+                    "description": "Id of Invoice"
+                }
+            }
+        },
+        "Json": {
+            "type": "string",
+            "description": "Changed entity information in Json format"
+        }
+    }
+}
